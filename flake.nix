@@ -17,6 +17,7 @@
         overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs {
           inherit system overlays;
+          wasm-tools.url = "github:bytecodealliance/wasm-tools";
         };
 
         # rust target name of the `system`
@@ -41,6 +42,7 @@
             rust-toolchain-nixpkgs-current # also contains clippy
             rust-analyzer
             cargo-watch
+            wasm-tools
           ];
 
           shellHook = ''
