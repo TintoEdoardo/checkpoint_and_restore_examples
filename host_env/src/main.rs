@@ -8,7 +8,12 @@ fn main() -> Result<()> {
 
     // Initialisation of the WebAssemòy runtime. 
 
-    println!("Initialisation of the runtime started...");
+    println!("  +-----------------------------------------------+");
+    println!("  |            Runtime initialisation             | ");
+    println!("  +-----------------------------------------------+");
+    println!("  |                                               | ");
+    println!("  |   Initialisation of the runtime started...    |");
+    println!("  |                                               | ");
 
     let engine : wasmtime::Engine = wasmtime::Engine::default();
     struct ApplicationState {
@@ -29,7 +34,7 @@ fn main() -> Result<()> {
             // Suspend for a sec. 
             std::thread::sleep(std::time::Duration::new(1, 0));
             
-            println!("new value is {} ", param);
+            println!("  |           New value from Wasm is {:>4}         | ", param);
         });
     let checkpoint: wasmtime::Func      =
         wasmtime::Func::wrap(&mut store, move |caller: wasmtime::Caller<'_, ApplicationState>| -> i32 {
@@ -59,16 +64,27 @@ fn main() -> Result<()> {
     let wasm_import_function : wasmtime::TypedFunc<i32,()> =
         instance.get_typed_func::<i32,()>(&mut store, "main_function")?;
 
-    println!("Initialisation of the runtime completed. ");
+    println!("  |   Initialisation of the runtime completed.    |");
+    println!("  |                                               | ");
 
     // Function execution. 
 
-    println!("The execution start. ");
+    println!("  |             The execution starts.             | ");
+    println!("  |                                               | ");
+    println!("  +-----------------------------------------------+\n");
 
+    println!("  +-----------------------------------------------+");
+    println!("  |                Execution trace                | ");
+    println!("  +-----------------------------------------------+");
+    println!("  |                                               | ");
     let _result : wasmtime::Result<()> =
         wasm_import_function.call(&mut store, 18);
 
-    println!("The execution is over. ");
+    println!("  |                                               | ");
+    println!("  +-----------------------------------------------+");
+    println!("  |              Checkpoint occurred              | ");
+    println!("  +-----------------------------------------------+\n");
+    std::thread::sleep(std::time::Duration::new(1, 0));
 
     let module_lin_mem : wasmtime::Memory =
         instance.get_memory(&mut store, "memory").expect("Failed to load memory");
@@ -80,13 +96,30 @@ fn main() -> Result<()> {
         checkpoint_vec.push(*(module_lin_mem.data_ptr(&store).wrapping_add(8)) as i32);
         checkpoint_vec.push(*(module_lin_mem.data_ptr(&store).wrapping_add(12)) as i32);
     }
-    println!("The content of the checkpoint memory is {:?}", checkpoint_vec);
+    
+    println!("  +-----------------------------------------------+");
+    println!("  |                   Checkpoint                  | ");
+    println!("  +-----------------------------------------------+");
+    println!("  |   n_(i-2)  |   n_(i-1)  |     n    |   iter   | ");
+    println!("  +-----------------------------------------------+");
+    println!("  |     {:>2}     |     {:>2}     |    {:>2}    |    {:>2}    |   ", 
+    checkpoint_vec[0],
+    checkpoint_vec[1],
+    checkpoint_vec[2],
+    checkpoint_vec[3]);
+    println!("  +-----------------------------------------------+\n");
+    std::thread::sleep(std::time::Duration::new(1, 0));
 
     // -----------------------
     // Resume the execution. 
     // -----------------------
 
-    println!("Re-initialisation of the runtime started...");
+    println!("  +-----------------------------------------------+");
+    println!("  |          Runtime re-initialisation            | ");
+    println!("  +-----------------------------------------------+");
+    println!("  |                                               | ");
+    println!("  |   Initialisation of the runtime started...    |");
+    println!("  |                                               | ");
 
     let engine : wasmtime::Engine = wasmtime::Engine::default();
 
@@ -105,7 +138,7 @@ fn main() -> Result<()> {
             // Suspend for a sec. 
             std::thread::sleep(std::time::Duration::new(1, 0));
             
-            println!("new value is {} ", param);
+            println!("  |           New value from Wasm is {:>4}         | ", param);
         });
     let checkpoint: wasmtime::Func      =
         wasmtime::Func::wrap(&mut store, move |caller: wasmtime::Caller<'_, ApplicationState>| -> i32 {
@@ -160,16 +193,26 @@ fn main() -> Result<()> {
     let wasm_import_function : wasmtime::TypedFunc<i32,()> =
         instance.get_typed_func::<i32,()>(&mut store, "main_function")?;
 
-    println!("Initialisation of the runtime completed. ");
+    println!("  |   Initialisation of the runtime completed.    |");
+    println!("  |                                               | ");
 
     // Function execution. 
 
-    println!("The execution start. ");
+    println!("  |             The execution starts.             | ");
+    println!("  |                                               | ");
+    println!("  +-----------------------------------------------+\n");
+    std::thread::sleep(std::time::Duration::new(1, 0));
+
+    println!("  +-----------------------------------------------+");
+    println!("  |        Execution trace (after resuming)       | ");
+    println!("  +-----------------------------------------------+");
+    println!("  |                                               | ");
 
     let _result : wasmtime::Result<()> =
         wasm_import_function.call(&mut store, 18);
 
-    println!("The execution is over. ");
+    println!("  |                                               | ");
+    println!("  +-----------------------------------------------+");
 
     Ok(())
 }
